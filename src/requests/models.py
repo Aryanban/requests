@@ -979,21 +979,21 @@ class Response:
     @overload
     def iter_lines(
         self,
-        chunk_size: int = ITER_CHUNK_SIZE,
+        chunk_size: int | None = ITER_CHUNK_SIZE,
         decode_unicode: Literal[False] = False,
         delimiter: bytes | None = None,
     ) -> Iterator[bytes]: ...
     @overload
     def iter_lines(
         self,
-        chunk_size: int = ITER_CHUNK_SIZE,
+        chunk_size: int | None = ITER_CHUNK_SIZE,
         *,
         decode_unicode: Literal[True],
         delimiter: str | bytes | None = None,
     ) -> Iterator[str | bytes]: ...
     def iter_lines(
         self,
-        chunk_size: int = ITER_CHUNK_SIZE,
+        chunk_size: int | None = ITER_CHUNK_SIZE,
         decode_unicode: bool = False,
         delimiter: str | bytes | None = None,
     ) -> Iterator[str | bytes]:
@@ -1001,8 +1001,8 @@ class Response:
         stream=True is set on the request, this avoids reading the
         content at once into memory for large responses.
 
-        The decode_unicode param works the same as in `iter_content`, with the
-        same caveats.
+        The chunk_size and decode_unicode params work the same as in
+        `iter_content`, with the same caveats.
 
         .. note:: This method is not reentrant safe.
         """

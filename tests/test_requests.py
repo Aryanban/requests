@@ -1524,6 +1524,21 @@ class TestRequests:
         with pytest.raises(TypeError):
             chunks = r.iter_content("1024")
 
+        r = requests.Response()
+        r.raw = io.BytesIO(b"the\ncontent\n")
+        lines = r.iter_lines(1)
+        assert list(lines) == [b"the", b"content"]
+
+        r = requests.Response()
+        r.raw = io.BytesIO(b"the\ncontent\n")
+        lines = r.iter_lines(None)
+        assert list(lines) == [b"the", b"content"]
+
+        r = requests.Response()
+        r.raw = io.BytesIO(b"the\ncontent\n")
+        with pytest.raises(TypeError):
+            lines = list(r.iter_lines("1024"))
+
     @pytest.mark.parametrize(
         "exception, args, expected",
         (
@@ -2179,6 +2194,14 @@ class TestRequests:
         assert r.status_code == 200
 
         it = r.iter_lines()
+        next(it)
+        assert len(list(it)) == 3
+
+    def test_response_iter_lines_none_chunk_size(self, httpbin):
+        r = requests.get(httpbin("stream/4"), stream=True)
+        assert r.status_code == 200
+
+        it = r.iter_lines(chunk_size=None)
         next(it)
         assert len(list(it)) == 3
 
